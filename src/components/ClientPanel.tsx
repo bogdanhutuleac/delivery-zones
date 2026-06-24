@@ -56,7 +56,7 @@ export const ClientPanel: React.FC<ClientPanelProps> = ({ zones, onAdminLogin })
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
             searchQuery
-          )}&limit=5&addressdetails=1`
+          )}&limit=5&addressdetails=1&countrycodes=ie`
         );
         if (response.ok) {
           const data = await response.json();
@@ -167,7 +167,7 @@ export const ClientPanel: React.FC<ClientPanelProps> = ({ zones, onAdminLogin })
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
           searchQuery
-        )}&limit=1`
+        )}&limit=1&countrycodes=ie`
       );
       if (response.ok) {
         const data = await response.json();

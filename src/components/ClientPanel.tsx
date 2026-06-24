@@ -54,13 +54,18 @@ export const ClientPanel: React.FC<ClientPanelProps> = ({ zones, onAdminLogin })
     const delayDebounceFn = setTimeout(async () => {
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&singleLine=${encodeURIComponent(
             searchQuery
-          )}&limit=5&addressdetails=1&countrycodes=ie`
+          )}&maxLocations=5&countryCode=IE`
         );
         if (response.ok) {
           const data = await response.json();
-          setSuggestions(data);
+          const results = (data.candidates || []).map((c: any) => ({
+            display_name: c.address,
+            lat: c.location.y,
+            lon: c.location.x
+          }));
+          setSuggestions(results);
         }
       } catch (err) {
         console.error('Error fetching autocomplete:', err);
@@ -165,14 +170,19 @@ export const ClientPanel: React.FC<ClientPanelProps> = ({ zones, onAdminLogin })
 
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&singleLine=${encodeURIComponent(
           searchQuery
-        )}&limit=1&countrycodes=ie`
+        )}&maxLocations=1&countryCode=IE`
       );
       if (response.ok) {
         const data = await response.json();
-        if (data && data.length > 0) {
-          handleAddressSelect(data[0]);
+        if (data.candidates && data.candidates.length > 0) {
+          const first = data.candidates[0];
+          handleAddressSelect({
+            display_name: first.address,
+            lat: first.location.y,
+            lon: first.location.x
+          });
         } else {
           alert('Could not find that address. Please try adding more detail (city, country, etc.).');
         }

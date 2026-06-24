@@ -72,7 +72,7 @@ function App() {
 
       // 2. Fetch public/zones.json if available
       try {
-        const res = await fetch("/zones.json");
+        const res = await fetch(`${import.meta.env.BASE_URL}zones.json`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
